@@ -1,3 +1,7 @@
+const path = require('path');
+const fs = require('fs');
+
+
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
@@ -12,14 +16,23 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
+const dbDir = path.join(__dirname, 'database');
+
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const dbPath = path.join(dbDir, 'database.sqlite');
+
 // Database setup
-const db = new sqlite3.Database('./database/users.db', (err) => {
-    if (err) {
-        console.error('Error opening database:', err);
-    } else {
-        console.log('Connected to SQLite database');
-        initDatabase();
-    }
+const sqlite3 = require('sqlite3').verbose();
+
+const db = new sqlite3.Database(dbPath, (err) => {
+  if (err) {
+    console.error('Error opening database:', err);
+  } else {
+    console.log('Database connected successfully');
+  }
 });
 
 // Initialize database tables
