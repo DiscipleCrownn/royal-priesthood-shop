@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROYAL PRIESTHOOD - Premium Streetwear</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+   <!-- the styles file is in css/styles.css -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            ROYAL PRIESTHOOD
+            <img src="logo/logo.png" alt="Royal Priesthood Logo" style="height: 40px; margin-left: 15px; vertical-align: middle;">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#collections">Collections</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <button class="login-btn">Login</button>
+            <button class="signup-btn">Sign Up</button>
+            <div class="cart-icon" id="cart-toggle">
+                🛒
+                <span class="cart-count" id="cart-count">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1>ROYAL<br>PRIESTHOOD</h1>
+            <p>Premium Streetwear & Lifestyle</p>
+            <img src="logo/logo.png" alt="Royal Priesthood Logo" style="height: 80px; margin-top: 2rem; filter: invert(1);">
+        </div>
+    </section>
+
+    <!-- Collections -->
+    <section class="collections" id="collections">
+        <h2 class="section-title">Collections</h2>
+
+        <!-- KNGDM Shirts -->
+        <div class="collection-category">
+            <h3 class="category-title">KNGDM Shirts</h3>
+            <div class="products-grid" id="kngdm-shirts"></div>
+        </div>
+
+        <!-- Limited Edition -->
+        <div class="collection-category">
+            <h3 class="category-title">Limited Edition</h3>
+            <div class="products-grid" id="limited-edition"></div>
+        </div>
+
+        <!-- Men Regular Fit -->
+        <div class="collection-category">
+            <h3 class="category-title">Men Regular Fit</h3>
+            <div class="products-grid" id="men-regular"></div>
+        </div>
+
+        <!-- Pants KNGDM -->
+        <div class="collection-category">
+            <h3 class="category-title">Pants KNGDM</h3>
+            <div class="products-grid" id="pants-kngdm"></div>
+        </div>
+
+        <!-- Priesthood Plain Collection -->
+        <div class="collection-category">
+            <h3 class="category-title">Priesthood Plain Collection</h3>
+            <div class="products-grid" id="plain-collection"></div>
+        </div>
+
+        <!-- Royal Chosen Collection -->
+        <div class="collection-category">
+            <h3 class="category-title">Royal Chosen Collection</h3>
+            <div class="products-grid" id="royal-chosen"></div>
+        </div>
+
+        <!-- Shadow of His Wings Collection -->
+        <div class="collection-category">
+            <h3 class="category-title">Shadow of His Wings Collection</h3>
+            <div class="products-grid" id="shadow-wings"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="about-content">
+            <h2 class="section-title">About Us</h2>
+            <div class="about-text">
+                <p class="about-intro">
+                    We are a brand that represents the embodiment of Christ—a living testament to faith woven into fabric, 
+                    where every thread speaks of divine purpose and every garment carries the weight of eternity. 
+                    We clothe ourselves not merely in cotton and design, but in the very nature of the One who calls us chosen, 
+                    royal, and set apart.
+                </p>
+                <div class="vision-box">
+                    <h3>Our Vision</h3>
+                    <p>
+                        To establish God's Kingdom on earth as it is in heaven—one soul, one garment, one moment at a time. 
+                        Through our designs, we proclaim the Gospel without words, carrying the light of Christ into every space we enter.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Contact Details</h3>
+                <div class="contact-item">
+                    <strong>Email:</strong>
+                    <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d9b0b7bfb699abb6a0b8b5a9abb0bcaaadb1b6b6bdf7bab6f7a3b8">[email&#160;protected]</a></p>
+                </div>
+                <div class="contact-item">
+                    <strong>Phone:</strong>
+                    <p>+27 (0) 11 234 5678</p>
+                </div>
+                <div class="contact-item">
+                    <strong>Address:</strong>
+                    <p>123 Fashion Street<br>Johannesburg, Gauteng<br>South Africa, 2000</p>
+                </div>
+                <div class="contact-item">
+                    <strong>Business Hours:</strong>
+                    <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
+                </div>
+            </div>
+            <div class="contact-form">
+                <form>
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <input type="tel" placeholder="Your Phone Number">
+                    <textarea placeholder="Your Message" rows="6" required></textarea>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-cart" id="close-cart">×</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <div class="empty-cart">
+                <p>Your cart is empty</p>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total">R0.00</span>
+            </div>
+            <button class="checkout-btn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 ROYAL PRIESTHOOD - All Rights Reserved</p>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    
+    <script src="js/main.js"></script>
+</body>
+</html>
