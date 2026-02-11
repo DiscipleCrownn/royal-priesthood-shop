@@ -3,28 +3,17 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');   // ← YOU MISSED THIS
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Health check
-app.get('/', (req, res) => {
-    res.send('Royal Priesthood API is running');
-});
-
-// Database
-
-const dbDir = path.join(__dirname, 'database');
-if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-}
-
-const dbPath = path.join(__dirname, 'database', 'users.db');
-const db = new sqlite3.Database(dbPath, (err) => {
+// Database setup
+const db = new sqlite3.Database('./database/users.db', (err) => {
     if (err) {
         console.error('Error opening database:', err);
     } else {
@@ -32,7 +21,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
         initDatabase();
     }
 });
-
 
 // Initialize database tables
 function initDatabase() {

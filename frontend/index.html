@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
-   <!-- the styles file is in css/styles.css -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -16,7 +15,7 @@
     <nav>
         <div class="logo">
             ROYAL PRIESTHOOD
-            <img src="logo/logo.png" alt="Royal Priesthood Logo" style="height: 40px; margin-left: 15px; vertical-align: middle;">
+            <img src="images/logo/logo.png" alt="Royal Priesthood Logo" style="height: 40px; margin-left: 15px; vertical-align: middle;">
         </div>
         <ul class="nav-links">
             <li><a href="#hero">Home</a></li>
@@ -25,8 +24,8 @@
             <li><a href="#contact">Contact</a></li>
         </ul>
         <div style="display: flex; align-items: center; gap: 1rem;">
-            <button class="login-btn">Login</button>
-            <button class="signup-btn">Sign Up</button>
+            <button class="login-btn" id="login-btn">Login</button>
+            <button class="signup-btn" id="signup-btn">Sign Up</button>
             <div class="cart-icon" id="cart-toggle">
                 🛒
                 <span class="cart-count" id="cart-count">0</span>
@@ -40,13 +39,19 @@
         <div class="hero-content">
             <h1>ROYAL<br>PRIESTHOOD</h1>
             <p>Premium Streetwear & Lifestyle</p>
-            <img src="logo/logo.png" alt="Royal Priesthood Logo" style="height: 80px; margin-top: 2rem; filter: invert(1);">
+            <img src="images/logo/logo.png" alt="Royal Priesthood Logo" style="height: 80px; margin-top: 2rem; filter: invert(1);">
         </div>
     </section>
 
     <!-- Collections -->
     <section class="collections" id="collections">
         <h2 class="section-title">Collections</h2>
+
+        <!-- Royal Chosen Collection -->
+        <div class="collection-category">
+            <h3 class="category-title">Royal Chosen Collection</h3>
+            <div class="products-grid" id="royal-chosen"></div>
+        </div>
 
         <!-- KNGDM Shirts -->
         <div class="collection-category">
@@ -76,12 +81,6 @@
         <div class="collection-category">
             <h3 class="category-title">Priesthood Plain Collection</h3>
             <div class="products-grid" id="plain-collection"></div>
-        </div>
-
-        <!-- Royal Chosen Collection -->
-        <div class="collection-category">
-            <h3 class="category-title">Royal Chosen Collection</h3>
-            <div class="products-grid" id="royal-chosen"></div>
         </div>
 
         <!-- Shadow of His Wings Collection -->
@@ -121,7 +120,7 @@
                 <h3>Contact Details</h3>
                 <div class="contact-item">
                     <strong>Email:</strong>
-                    <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d9b0b7bfb699abb6a0b8b5a9abb0bcaaadb1b6b6bdf7bab6f7a3b8">[email&#160;protected]</a></p>
+                    <p>info@royalpriesthood.co.za</p>
                 </div>
                 <div class="contact-item">
                     <strong>Phone:</strong>
@@ -137,7 +136,7 @@
                 </div>
             </div>
             <div class="contact-form">
-                <form>
+                <form id="contact-form">
                     <input type="text" placeholder="Your Name" required>
                     <input type="email" placeholder="Your Email" required>
                     <input type="tel" placeholder="Your Phone Number">
@@ -147,6 +146,37 @@
             </div>
         </div>
     </section>
+
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="login-modal">&times;</span>
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+            <p class="modal-switch">Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signup-modal">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="signup-modal">&times;</span>
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <input type="text" id="signup-name" placeholder="Full Name" required>
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="tel" id="signup-phone" placeholder="Phone Number" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <input type="password" id="signup-confirm-password" placeholder="Confirm Password" required>
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+            <p class="modal-switch">Already have an account? <a href="#" id="show-login">Login</a></p>
+        </div>
+    </div>
 
     <!-- Cart Sidebar -->
     <div class="cart-sidebar" id="cart-sidebar">
@@ -173,8 +203,9 @@
         <p>© 2026 ROYAL PRIESTHOOD - All Rights Reserved</p>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
