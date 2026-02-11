@@ -7,20 +7,24 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Database setup
-const db = new sqlite3.Database('./database/users.db', (err) => {
-    if (err) {
-        console.error('Error opening database:', err);
-    } else {
+// Health check
+app.get('/', (req, res) => {
+    res.send('Royal Priesthood API is running');
+});
+
+// Database
+const dbPath = path.join(__dirname, 'database', 'users.db');
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) console.error('Error opening database:', err);
+    else {
         console.log('Connected to SQLite database');
         initDatabase();
     }
 });
+
 
 // Initialize database tables
 function initDatabase() {
