@@ -3,6 +3,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');   // ← YOU MISSED THIS
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,10 +17,17 @@ app.get('/', (req, res) => {
 });
 
 // Database
+
+const dbDir = path.join(__dirname, 'database');
+if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+}
+
 const dbPath = path.join(__dirname, 'database', 'users.db');
 const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) console.error('Error opening database:', err);
-    else {
+    if (err) {
+        console.error('Error opening database:', err);
+    } else {
         console.log('Connected to SQLite database');
         initDatabase();
     }
