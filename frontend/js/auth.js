@@ -1,5 +1,6 @@
 // Authentication Functions
-const API_URL = 'http://localhost:3000/api'; // Change this to your backend URL
+const API_URL = "https://royal-priesthood-shop.onrender.com/api";
+ // Change this to your backend URL
 
 // Show Modal
 function showModal(modalId) {
