@@ -1,22 +1,30 @@
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Render products
     renderProducts();
-    
+
     // Load cart from localStorage
     loadCart();
-    
+
     // Check login status
     checkLoginStatus();
-    
+
     // Event Listeners for Cart
     document.addEventListener('click', (e) => {
         // Add to cart
         if (e.target.closest('.add-to-cart')) {
             const btn = e.target.closest('.add-to-cart');
+            const card = btn.closest('.product-card');
+            const selectedSize = card.querySelector('.size-btn.selected');
+
+            if (!selectedSize) {
+                card.querySelector('.size-warning').classList.add('visible');
+                return;
+            }
+
             const category = btn.dataset.category;
-            const index = parseInt(btn.dataset.index);
-            addToCart(category, index);
+            const index = btn.dataset.index;
+            addToCart(category, index, selectedSize.dataset.size);
         }
 
         // Remove from cart
@@ -35,46 +43,46 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.id === 'close-cart' || e.target.closest('#close-cart')) {
             closeCart();
         }
-        
+
         // Close modal
         if (e.target.classList.contains('close-modal')) {
             const modalId = e.target.dataset.modal;
             closeModal(modalId);
         }
-        
+
         // Close modal when clicking outside
         if (e.target.classList.contains('modal')) {
             closeModal(e.target.id);
         }
     });
-    
+
     // Login button
     document.getElementById('login-btn').addEventListener('click', () => {
         showModal('login-modal');
     });
-    
+
     // Signup button
     document.getElementById('signup-btn').addEventListener('click', () => {
         showModal('signup-modal');
     });
-    
+
     // Switch between login and signup
     document.getElementById('show-signup').addEventListener('click', (e) => {
         e.preventDefault();
         closeModal('login-modal');
         showModal('signup-modal');
     });
-    
+
     document.getElementById('show-login').addEventListener('click', (e) => {
         e.preventDefault();
         closeModal('signup-modal');
         showModal('login-modal');
     });
-    
+
     // Form submissions
     document.getElementById('signup-form').addEventListener('submit', handleSignup);
     document.getElementById('login-form').addEventListener('submit', handleLogin);
-    
+
     // Contact form
     document.getElementById('contact-form').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -82,3 +90,4 @@ document.addEventListener('DOMContentLoaded', function() {
         e.target.reset();
     });
 });
+

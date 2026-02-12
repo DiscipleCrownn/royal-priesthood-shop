@@ -19,6 +19,65 @@ body {
     overflow-x: hidden;
 }
 
+
+/* Size Selector */
+/* Size Selector */
+.size-selector {
+    display: flex;
+    gap: 0.4rem;
+    margin: 0.6rem 0;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.product-card:hover .size-selector {
+    opacity: 1;
+    max-height: 60px;
+}
+
+.size-btn {
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid #111;
+    background: transparent;
+    color: #111;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.size-btn:hover {
+    transform: scale(1.15);
+}
+
+.size-btn.selected {
+    background: #111;
+    color: #fff;
+    transform: scale(1.15);
+}
+
+/* Size warning */
+.size-warning {
+    color: #ff4444;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    margin-top: 0.25rem;
+    min-height: 1rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.size-warning.visible {
+    opacity: 1;
+}
+
 /* Cursor */
 body {
     cursor: default;
@@ -134,20 +193,25 @@ nav {
 }
 
 /* Hero */
+/* Hero */
 .hero {
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--black);
     color: var(--white);
     position: relative;
     overflow: hidden;
+    background-image: url('../images/hero-image/hero.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .hero-content {
     text-align: center;
     z-index: 2;
+    position: relative;
 }
 
 .hero h1 {
@@ -170,10 +234,8 @@ nav {
     position: absolute;
     width: 100%;
     height: 100%;
-    opacity: 0.05;
-    background: 
-        repeating-linear-gradient(0deg, transparent, transparent 2px, var(--white) 2px, var(--white) 4px),
-        repeating-linear-gradient(90deg, transparent, transparent 2px, var(--white) 2px, var(--white) 4px);
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1;
 }
 
 @keyframes fadeInUp {
@@ -528,7 +590,6 @@ nav {
     padding: 4rem 2rem;
     color: var(--grey);
 }
-
 /* About Section */
 .about-section {
     padding: 8rem 4rem;
@@ -538,6 +599,13 @@ nav {
 .about-content {
     max-width: 1200px;
     margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+}
+
+.about-left {
+    flex: 1;
 }
 
 .about-text {
@@ -549,7 +617,7 @@ nav {
 .about-intro {
     font-size: 1.4rem;
     line-height: 2;
-    text-align: center;
+    text-align: left;
     font-weight: 300;
 }
 
@@ -573,9 +641,88 @@ nav {
     font-weight: 300;
 }
 
+/* About RHS Image */
+.about-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-image-wrap {
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+}
+
+.about-promo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.about-image-wrap:hover .about-promo-img {
+    transform: scale(1.04);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .about-section {
+        padding: 5rem 2rem;
+    }
+
+    .about-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .about-intro {
+        text-align: center;
+    }
+
+    .about-right {
+        width: 100%;
+    }
+
+    .about-image-wrap {
+        max-width: 100%;
+        aspect-ratio: 4 / 3;
+    }
+}
 /* Contact Section */
 .contact-section {
     padding: 8rem 4rem;
+    position: relative;
+    overflow: hidden;
+     background: #000;
+}
+
+/* Background Video */
+.contact-video-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* Subtle overlay — video is dark so we just deepen it slightly */
+.contact-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1;
+}
+
+/* All content sits above video */
+.contact-section .section-title,
+.contact-container {
+    position: relative;
+    z-index: 2;
 }
 
 .contact-container {
@@ -587,11 +734,13 @@ nav {
     margin-top: 3rem;
 }
 
+/* Fonts flipped to white since background is now dark */
 .contact-info h3 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2rem;
     letter-spacing: 2px;
     margin-bottom: 2rem;
+    color: var(--white);
 }
 
 .contact-item {
@@ -604,14 +753,21 @@ nav {
     font-size: 1.2rem;
     letter-spacing: 1px;
     margin-bottom: 0.5rem;
+    color: var(--white);
 }
 
 .contact-item p {
     font-size: 1.1rem;
     line-height: 1.6;
-    color: var(--grey);
+    color: rgba(255, 255, 255, 0.7);
 }
 
+/* Section title over video */
+.contact-section .section-title {
+    color: var(--white);
+}
+
+/* Form inputs — semi-transparent so video bleeds through slightly */
 .contact-form form {
     display: flex;
     flex-direction: column;
@@ -621,16 +777,36 @@ nav {
 .contact-form input,
 .contact-form textarea {
     padding: 1rem;
-    border: 2px solid var(--light-grey);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--white);
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.1rem;
     transition: var(--transition);
 }
 
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
 .contact-form input:focus,
 .contact-form textarea:focus {
     outline: none;
-    border-color: var(--black);
+    border-color: var(--white);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact-section {
+        padding: 5rem 2rem;
+    }
+
+    .contact-container {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
 }
 
 .submit-btn {
@@ -745,6 +921,8 @@ footer {
     color: var(--white);
     padding: 4rem;
     text-align: center;
+
+    border-top: 1px solid var(--white);
 }
 
 footer p {
@@ -856,3 +1034,4 @@ footer p {
         font-size: 2rem;
     }
 }
+

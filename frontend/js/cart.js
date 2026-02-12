@@ -2,19 +2,15 @@
 let cart = [];
 
 // Add to Cart
-function addToCart(category, index) {
+function addToCart(category, index, size) {
     const product = products[category][index];
-    cart.push({ ...product, category, index });
+    cart.push({ ...product, category, index, size });
     updateCart();
-    
-    // Animation feedback
+
     const cartCount = document.getElementById('cart-count');
     cartCount.style.transform = 'scale(1.5)';
-    setTimeout(() => {
-        cartCount.style.transform = 'scale(1)';
-    }, 300);
-    
-    // Save to localStorage
+    setTimeout(() => { cartCount.style.transform = 'scale(1)'; }, 300);
+
     saveCart();
 }
 
@@ -23,6 +19,7 @@ function updateCart() {
     const cartCount = document.getElementById('cart-count');
     const cartItems = document.getElementById('cart-items');
     const cartTotal = document.getElementById('cart-total');
+
 
     cartCount.textContent = cart.length;
 
@@ -41,8 +38,9 @@ function updateCart() {
                 <img src="images/${item.category}/${item.image}" alt="${item.name}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='${item.color}'">
             </div>
             <div class="cart-item-details">
+
                 <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-color">${item.color}</div>
+                  <div class="cart-item-color">${item.color} — Size: ${item.size}</div>
                 <div class="cart-item-price">R${item.price.toFixed(2)}</div>
                 <button class="cart-item-remove" data-index="${index}">Remove</button>
             </div>
