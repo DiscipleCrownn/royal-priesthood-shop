@@ -178,7 +178,7 @@ async function handleCheckout(e) {
             updateCart();
             saveCart();
             document.getElementById('checkout-form').reset();
-            alert(`Order placed! 🎉\n\nOrder #${data.orderId}\nWe'll be in touch soon.`);
+            alert(`Order placed! 🎉\nWe'll be in touch soon.`);
         } else {
             alert(data.message || 'Checkout failed. Please try again.');
         }
