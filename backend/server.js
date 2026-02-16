@@ -1,9 +1,8 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');   // ← YOU MISSED THIS
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,149 +15,129 @@ app.get('/', (req, res) => {
     res.send('Royal Priesthood API is running');
 });
 
-// Database
-
-const dbDir = path.join(__dirname, 'database');
-if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-}
-
-const dbPath = path.join(__dirname, 'database', 'users.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Error opening database:', err);
-    } else {
-        console.log('Connected to SQLite database');
-        initDatabase();
-    }
+// Database connection pool
+const pool = mysql.createPool({
+    host:     process.env.DB_HOST     || 'localhost',
+    port:     process.env.DB_PORT     || 3306,
+    user:     process.env.DB_USER     || 'root',
+    password: process.env.DB_PASSWORD || 'Melvin6211080!',
+    database: process.env.DB_NAME     || 'royal_priesthood',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-
-// Initialize database tables
-function initDatabase() {
-    db.run(`
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            phone TEXT NOT NULL,
-            password TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    `, (err) => {
-        if (err) {
-            console.error('Error creating users table:', err);
-        } else {
-            console.log('Users table ready');
-        }
-    });
+// Initialize database table
+async function initDatabase() {
+    try {
+        const conn = await pool.getConnection();
+        await conn.execute(`
+            CREATE TABLE IF NOT EXISTS users (
+                id         INT AUTO_INCREMENT PRIMARY KEY,
+                name       VARCHAR(255) NOT NULL,
+                email      VARCHAR(255) UNIQUE NOT NULL,
+                phone      VARCHAR(50)  NOT NULL,
+                password   VARCHAR(255) NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        conn.release();
+        console.log('Connected to MySQL database');
+        console.log('Users table ready');
+    } catch (err) {
+        console.error('Database initialization error:', err);
+        process.exit(1);
+    }
 }
+
+initDatabase();
 
 // API Routes
 
 // Signup endpoint
 app.post('/api/signup', async (req, res) => {
     const { name, email, phone, password } = req.body;
-    
-    // Validate input
+
     if (!name || !email || !phone || !password) {
         return res.status(400).json({ message: 'All fields are required' });
     }
-    
-    // Validate email format
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
     }
-    
-    // Validate password length
+
     if (password.length < 6) {
         return res.status(400).json({ message: 'Password must be at least 6 characters' });
     }
-    
+
     try {
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
-        
-        // Insert user into database
-        db.run(
+        const [result] = await pool.execute(
             'INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)',
-            [name, email, phone, hashedPassword],
-            function(err) {
-                if (err) {
-                    if (err.message.includes('UNIQUE constraint failed')) {
-                        return res.status(400).json({ message: 'Email already exists' });
-                    }
-                    console.error('Database error:', err);
-                    return res.status(500).json({ message: 'Error creating user' });
-                }
-                
-                res.status(201).json({
-                    message: 'User created successfully',
-                    userId: this.lastID
-                });
-            }
+            [name, email, phone, hashedPassword]
         );
-    } catch (error) {
-        console.error('Signup error:', error);
+
+        res.status(201).json({
+            message: 'User created successfully',
+            userId: result.insertId
+        });
+    } catch (err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ message: 'Email already exists' });
+        }
+        console.error('Signup error:', err);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
 // Login endpoint
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
-    
-    // Validate input
+
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required' });
     }
-    
-    // Find user in database
-    db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
-        if (err) {
-            console.error('Database error:', err);
-            return res.status(500).json({ message: 'Server error' });
-        }
-        
+
+    try {
+        const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [email]);
+        const user = rows[0];
+
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
-        
-        try {
-            // Compare password
-            const isMatch = await bcrypt.compare(password, user.password);
-            
-            if (!isMatch) {
-                return res.status(401).json({ message: 'Invalid email or password' });
-            }
-            
-            // Return user data (excluding password)
-            res.json({
-                message: 'Login successful',
-                user: {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    phone: user.phone
-                }
-            });
-        } catch (error) {
-            console.error('Login error:', error);
-            res.status(500).json({ message: 'Server error' });
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Invalid email or password' });
         }
-    });
+
+        res.json({
+            message: 'Login successful',
+            user: {
+                id:    user.id,
+                name:  user.name,
+                email: user.email,
+                phone: user.phone
+            }
+        });
+    } catch (err) {
+        console.error('Login error:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
 });
 
 // Get all users (admin endpoint - remove in production)
-app.get('/api/users', (req, res) => {
-    db.all('SELECT id, name, email, phone, created_at FROM users', [], (err, rows) => {
-        if (err) {
-            console.error('Database error:', err);
-            return res.status(500).json({ message: 'Server error' });
-        }
+app.get('/api/users', async (req, res) => {
+    try {
+        const [rows] = await pool.execute(
+            'SELECT id, name, email, phone, created_at FROM users'
+        );
         res.json(rows);
-    });
+    } catch (err) {
+        console.error('Database error:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
 });
 
 // Serve frontend
@@ -172,12 +151,8 @@ app.listen(PORT, () => {
 });
 
 // Handle shutdown
-process.on('SIGINT', () => {
-    db.close((err) => {
-        if (err) {
-            console.error('Error closing database:', err);
-        }
-        console.log('\nDatabase connection closed');
-        process.exit(0);
-    });
+process.on('SIGINT', async () => {
+    await pool.end();
+    console.log('\nDatabase connection pool closed');
+    process.exit(0);
 });
