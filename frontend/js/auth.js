@@ -56,39 +56,29 @@ async function handleSignup(e) {
 }
 
 // Handle Login
-async function handleLogin(e) {
-    e.preventDefault();
-    
-    const email = e.target[0].value;
-    const password = e.target[1].value;
-    
-    try {
-        const response = await fetch(`${API_URL}/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            // Store user data
-            localStorage.setItem('user', JSON.stringify(data.user));
-            alert(`Welcome back, ${data.user.name}!`);
-            closeModal('login-modal');
-            updateUIForLoggedInUser(data.user);
-            document.getElementById('login-form').reset();
-        } else {
-            alert(data.message || 'Login failed. Please try again.');
-        }
-    } catch (error) {
-        console.error('Login error:', error);
-        alert('An error occurred. Please try again later.');
-    }
-}
+if (response.ok) {
+    // Check if first time login
+    const knownUsers = JSON.parse(localStorage.getItem('knownUsers') || '[]');
+    const isFirstTime = !knownUsers.includes(data.user.email);
 
+    // If first time, add them to known users
+    if (isFirstTime) {
+        knownUsers.push(data.user.email);
+        localStorage.setItem('knownUsers', JSON.stringify(knownUsers));
+    }
+
+    // Store user data
+    localStorage.setItem('user', JSON.stringify(data.user));
+    
+    const greeting = isFirstTime 
+        ? `Hi ${data.user.name}!` 
+        : `Welcome back, ${data.user.name}!`;
+    
+    alert(greeting);
+    closeModal('login-modal');
+    updateUIForLoggedInUser(data.user);
+    document.getElementById('login-form').reset();
+}
 // Update UI for logged in user
 function updateUIForLoggedInUser(user) {
     const loginBtn = document.getElementById('login-btn');
