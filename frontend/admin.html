@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Priesthood — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black:   #0a0a0a;
+            --dark:    #111111;
+            --card:    #161616;
+            --border:  #2a2a2a;
+            --gold:    #c9a84c;
+            --gold2:   #e8cc7a;
+            --white:   #f0ece4;
+            --muted:   #666;
+            --green:   #4caf6e;
+            --orange:  #e09b3d;
+            --red:     #c45c5c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Cormorant Garamond', serif;
+            min-height: 100vh;
+        }
+
+        /* ── LOGIN SCREEN ── */
+        #login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--black);
+            background-image: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%);
+        }
+
+        .login-box {
+            width: 380px;
+            border: 1px solid var(--border);
+            padding: 3rem;
+            background: var(--card);
+            text-align: center;
+        }
+
+        .login-box .crown {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-box h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            color: var(--gold);
+            margin-bottom: 0.25rem;
+        }
+
+        .login-box p {
+            color: var(--muted);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-box input {
+            width: 100%;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            color: var(--white);
+            padding: 0.85rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .login-box input:focus { border-color: var(--gold); }
+
+        .login-box button {
+            width: 100%;
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            padding: 0.85rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-box button:hover { background: var(--gold2); }
+
+        .login-error {
+            color: var(--red);
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* ── ADMIN DASHBOARD ── */
+        #dashboard { display: none; }
+
+        header {
+            background: var(--dark);
+            border-bottom: 1px solid var(--border);
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: 4px;
+            color: var(--gold);
+        }
+
+        .header-left span {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .admin-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 0.3rem 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.3rem 0.8rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+        /* ── TABS ── */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            padding: 0 2.5rem;
+            background: var(--dark);
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            color: var(--muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover { color: var(--white); }
+        .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+        /* ── CONTENT ── */
+        .content {
+            padding: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* ── STATS ROW ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+        }
+
+        .stat-card .label {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.2rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 4px;
+            color: var(--white);
+        }
+
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.4rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* ── TABLE ── */
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead tr {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            padding: 0.9rem 1.2rem;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--white);
+            vertical-align: top;
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        tbody tr:hover { background: rgba(201,168,76,0.03); }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* ── BADGES ── */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .badge-pending  { background: rgba(224,155,61,0.15);  color: var(--orange); border: 1px solid rgba(224,155,61,0.3); }
+        .badge-paid     { background: rgba(76,175,110,0.15);  color: var(--green);  border: 1px solid rgba(76,175,110,0.3); }
+        .badge-shipped  { background: rgba(201,168,76,0.15);  color: var(--gold);   border: 1px solid rgba(201,168,76,0.3); }
+        .badge-admin    { background: rgba(201,168,76,0.15);  color: var(--gold);   border: 1px solid rgba(201,168,76,0.3); }
+        .badge-user     { background: rgba(255,255,255,0.05); color: var(--muted);  border: 1px solid var(--border); }
+
+        /* ── STATUS SELECT ── */
+        .status-select {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            color: var(--white);
+            padding: 0.3rem 0.6rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* ── CART ITEMS IN TABLE ── */
+        .cart-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .cart-item-row {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .cart-item-row strong { color: var(--white); }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--muted);
+        }
+
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+        .empty-state p { letter-spacing: 2px; text-transform: uppercase; font-size: 0.85rem; }
+
+        /* ── LOADING ── */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        /* ── ORDER DETAIL ── */
+        .address-cell {
+            max-width: 200px;
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        .notes-cell {
+            max-width: 180px;
+            font-size: 0.82rem;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .total-cell {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            color: var(--gold);
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+    <div class="login-box">
+        <div class="crown">♛</div>
+        <h1>Admin Panel</h1>
+        <p>Royal Priesthood</p>
+        <input type="email" id="admin-email" placeholder="Email address">
+        <input type="password" id="admin-password" placeholder="Password">
+        <button onclick="adminLogin()">Enter</button>
+        <div class="login-error" id="login-error">Invalid credentials or not an admin account.</div>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+    <header>
+        <div class="header-left">
+            <h1>Royal Priesthood</h1>
+            <span>Admin Dashboard</span>
+        </div>
+        <div class="header-right">
+            <span class="admin-badge" id="admin-name-badge">ADMIN</span>
+            <button class="logout-btn" onclick="adminLogout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('overview')">Overview</div>
+        <div class="tab" onclick="switchTab('users')">Users</div>
+        <div class="tab" onclick="switchTab('orders')">Orders</div>
+    </div>
+
+    <div class="content">
+
+        <!-- OVERVIEW TAB -->
+        <div class="tab-panel active" id="tab-overview">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="label">Total Users</div>
+                    <div class="value" id="stat-users">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total Orders</div>
+                    <div class="value" id="stat-orders">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Revenue (Simulated)</div>
+                    <div class="value" id="stat-revenue">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Pending Orders</div>
+                    <div class="value" id="stat-pending">—</div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>Recent Orders</h2>
+            </div>
+            <div class="table-wrap" id="recent-orders-table">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div class="tab-panel" id="tab-users">
+            <div class="section-header">
+                <h2>All Users</h2>
+                <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
+            </div>
+            <div class="table-wrap" id="users-table">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+
+        <!-- ORDERS TAB -->
+        <div class="tab-panel" id="tab-orders">
+            <div class="section-header">
+                <h2>All Orders</h2>
+                <button class="refresh-btn" onclick="loadOrders()">↻ Refresh</button>
+            </div>
+            <div class="table-wrap" id="orders-table">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const API_URL = 'https://royal-priesthood-shop.onrender.com/api';
+    let adminUser = null;
+
+    // ── LOGIN ──────────────────────────────────────────────────────────────
+    async function adminLogin() {
+        const email    = document.getElementById('admin-email').value;
+        const password = document.getElementById('admin-password').value;
+        const errEl    = document.getElementById('login-error');
+
+        errEl.style.display = 'none';
+
+        try {
+            const res  = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+
+            if (!res.ok || !data.user.is_admin) {
+                errEl.style.display = 'block';
+                return;
+            }
+
+            adminUser = data.user;
+            localStorage.setItem('adminUser', JSON.stringify(adminUser));
+            showDashboard();
+        } catch (err) {
+            errEl.style.display = 'block';
+        }
+    }
+
+    function adminLogout() {
+        localStorage.removeItem('adminUser');
+        adminUser = null;
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('login-screen').style.display = 'flex';
+    }
+
+    function showDashboard() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('admin-name-badge').textContent = adminUser.name.toUpperCase();
+        loadOverview();
+        loadUsers();
+        loadOrders();
+    }
+
+    // Allow Enter key on login
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
+            adminLogin();
+        }
+    });
+
+    // ── TABS ───────────────────────────────────────────────────────────────
+    function switchTab(name) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById(`tab-${name}`).classList.add('active');
+    }
+
+    // ── HELPERS ────────────────────────────────────────────────────────────
+    function adminHeaders() {
+        return { 'Content-Type': 'application/json', 'x-admin-id': adminUser.id };
+    }
+
+    function formatDate(d) {
+        return new Date(d).toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function statusBadge(status) {
+        const map = { pending: 'badge-pending', paid: 'badge-paid', shipped: 'badge-shipped' };
+        return `<span class="badge ${map[status] || 'badge-pending'}">${status}</span>`;
+    }
+
+    // ── OVERVIEW ───────────────────────────────────────────────────────────
+    async function loadOverview() {
+        try {
+            const [usersRes, ordersRes] = await Promise.all([
+                fetch(`${API_URL}/admin/users`,  { headers: adminHeaders() }),
+                fetch(`${API_URL}/admin/orders`, { headers: adminHeaders() })
+            ]);
+
+            const users  = await usersRes.json();
+            const orders = await ordersRes.json();
+
+            const revenue = orders.reduce((sum, o) => sum + parseFloat(o.total), 0);
+            const pending = orders.filter(o => o.status === 'pending').length;
+
+            document.getElementById('stat-users').textContent   = users.length;
+            document.getElementById('stat-orders').textContent  = orders.length;
+            document.getElementById('stat-revenue').textContent = `R${revenue.toFixed(0)}`;
+            document.getElementById('stat-pending').textContent = pending;
+
+            // Recent 5 orders
+            const recent = orders.slice(0, 5);
+            const el = document.getElementById('recent-orders-table');
+
+            if (recent.length === 0) {
+                el.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>No orders yet</p></div>`;
+                return;
+            }
+
+            el.innerHTML = `
+                <table>
+                    <thead><tr>
+                        <th>#</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th>
+                    </tr></thead>
+                    <tbody>
+                        ${recent.map(o => `
+                            <tr>
+                                <td class="mono">#${o.id}</td>
+                                <td>${o.user_name}<br><span class="mono">${o.user_email}</span></td>
+                                <td class="total-cell">R${parseFloat(o.total).toFixed(2)}</td>
+                                <td>${statusBadge(o.status)}</td>
+                                <td class="mono">${formatDate(o.created_at)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>`;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // ── USERS ──────────────────────────────────────────────────────────────
+    async function loadUsers() {
+        const el = document.getElementById('users-table');
+        el.innerHTML = '<div class="loading">Loading...</div>';
+
+        try {
+            const res   = await fetch(`${API_URL}/admin/users`, { headers: adminHeaders() });
+            const users = await res.json();
+
+            if (users.length === 0) {
+                el.innerHTML = `<div class="empty-state"><div class="icon">👤</div><p>No users yet</p></div>`;
+                return;
+            }
+
+            el.innerHTML = `
+                <table>
+                    <thead><tr>
+                        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th>
+                    </tr></thead>
+                    <tbody>
+                        ${users.map(u => `
+                            <tr>
+                                <td class="mono">${u.id}</td>
+                                <td>${u.name}</td>
+                                <td class="mono">${u.email}</td>
+                                <td class="mono">${u.phone}</td>
+                                <td>${u.is_admin
+                                    ? '<span class="badge badge-admin">Admin</span>'
+                                    : '<span class="badge badge-user">User</span>'}</td>
+                                <td class="mono">${formatDate(u.created_at)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>`;
+        } catch (err) {
+            el.innerHTML = '<div class="loading">Error loading users.</div>';
+        }
+    }
+
+    // ── ORDERS ─────────────────────────────────────────────────────────────
+    async function loadOrders() {
+        const el = document.getElementById('orders-table');
+        el.innerHTML = '<div class="loading">Loading...</div>';
+
+        try {
+            const res    = await fetch(`${API_URL}/admin/orders`, { headers: adminHeaders() });
+            const orders = await res.json();
+
+            if (orders.length === 0) {
+                el.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>No orders yet</p></div>`;
+                return;
+            }
+
+            el.innerHTML = `
+                <table>
+                    <thead><tr>
+                        <th>#</th><th>Customer</th><th>Delivery Address</th><th>Items</th><th>Total</th><th>Notes</th><th>Status</th><th>Date</th>
+                    </tr></thead>
+                    <tbody>
+                        ${orders.map(o => {
+                            const items = typeof o.cart_items === 'string' ? JSON.parse(o.cart_items) : o.cart_items;
+                            return `
+                            <tr>
+                                <td class="mono">#${o.id}</td>
+                                <td>${o.user_name}<br><span class="mono">${o.user_email}</span></td>
+                                <td class="address-cell">${o.delivery_address}</td>
+                                <td>
+                                    <div class="cart-preview">
+                                        ${items.map(i => `
+                                            <div class="cart-item-row">
+                                                <strong>${i.name}</strong> — ${i.color} / ${i.size}
+                                                <span class="mono">R${i.price.toFixed(2)}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </td>
+                                <td class="total-cell">R${parseFloat(o.total).toFixed(2)}</td>
+                                <td class="notes-cell">${o.order_notes || '—'}</td>
+                                <td>
+                                    <select class="status-select" onchange="updateStatus(${o.id}, this.value)">
+                                        <option ${o.status==='pending'  ? 'selected':''}>pending</option>
+                                        <option ${o.status==='paid'     ? 'selected':''}>paid</option>
+                                        <option ${o.status==='shipped'  ? 'selected':''}>shipped</option>
+                                    </select>
+                                </td>
+                                <td class="mono">${formatDate(o.created_at)}</td>
+                            </tr>`
+                        }).join('')}
+                    </tbody>
+                </table>`;
+        } catch (err) {
+            el.innerHTML = '<div class="loading">Error loading orders.</div>';
+        }
+    }
+
+    async function updateStatus(orderId, status) {
+        try {
+            await fetch(`${API_URL}/admin/orders/${orderId}/status`, {
+                method: 'PATCH',
+                headers: adminHeaders(),
+                body: JSON.stringify({ status })
+            });
+        } catch (err) {
+            console.error('Failed to update status', err);
+        }
+    }
+
+    // ── AUTO LOGIN if session saved ────────────────────────────────────────
+    const saved = localStorage.getItem('adminUser');
+    if (saved) {
+        adminUser = JSON.parse(saved);
+        showDashboard();
+    }
+</script>
+</body>
+</html>
