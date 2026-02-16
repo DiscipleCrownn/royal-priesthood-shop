@@ -47,9 +47,9 @@
             <p>Premium Streetwear & Lifestyle</p>
             <img src="images/logo/logo.png" alt="Royal Priesthood Logo"
                 style="height: 80px; margin-top: 2rem; filter: invert(1);">
-                   <h1 style="font-size: 50px">Launching Soon</h1>
+            <h1 style="font-size: 50px">Launching Soon</h1>
         </div>
-     
+
     </section>
 
     <!-- Collections -->
@@ -131,46 +131,46 @@
             </div>
         </div>
     </section>>
-<!-- Contact Section -->
-<section class="contact-section" id="contact">
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
 
-    <video class="contact-video-bg" autoplay muted loop playsinline>
-        <source src="images/about/brand.mp4" type="video/mp4">
-    </video>
-    <div class="contact-overlay"></div>
+        <video class="contact-video-bg" autoplay muted loop playsinline>
+            <source src="images/about/brand.mp4" type="video/mp4">
+        </video>
+        <div class="contact-overlay"></div>
 
-    <h2 class="section-title">Get In Touch</h2>
-    <div class="contact-container">
-        <div class="contact-info">
-            <h3>Contact Details</h3>
-            <div class="contact-item">
-                <strong>Email:</strong>
-                <p>info@royalpriesthood.co.za</p>
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Contact Details</h3>
+                <div class="contact-item">
+                    <strong>Email:</strong>
+                    <p>info@royalpriesthood.co.za</p>
+                </div>
+                <div class="contact-item">
+                    <strong>Phone:</strong>
+                    <p>+27 (0) 11 234 5678</p>
+                </div>
+                <div class="contact-item">
+                    <strong>Address:</strong>
+                    <p>123 Fashion Street<br>Johannesburg, Gauteng<br>South Africa, 2000</p>
+                </div>
+                <div class="contact-item">
+                    <strong>Business Hours:</strong>
+                    <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
+                </div>
             </div>
-            <div class="contact-item">
-                <strong>Phone:</strong>
-                <p>+27 (0) 11 234 5678</p>
-            </div>
-            <div class="contact-item">
-                <strong>Address:</strong>
-                <p>123 Fashion Street<br>Johannesburg, Gauteng<br>South Africa, 2000</p>
-            </div>
-            <div class="contact-item">
-                <strong>Business Hours:</strong>
-                <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
+            <div class="contact-form">
+                <form id="contact-form">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <input type="tel" placeholder="Your Phone Number">
+                    <textarea placeholder="Your Message" rows="6" required></textarea>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
             </div>
         </div>
-        <div class="contact-form">
-            <form id="contact-form">
-                <input type="text" placeholder="Your Name" required>
-                <input type="email" placeholder="Your Email" required>
-                <input type="tel" placeholder="Your Phone Number">
-                <textarea placeholder="Your Message" rows="6" required></textarea>
-                <button type="submit" class="submit-btn">Send Message</button>
-            </form>
-        </div>
-    </div>
-</section>
+    </section>
 
     <!-- Login Modal -->
     <div class="modal" id="login-modal">
@@ -203,7 +203,7 @@
         </div>
     </div>
 
-<!-- Cart Sidebar -->
+    <!-- Cart Sidebar -->
     <div class="cart-sidebar" id="cart-sidebar">
         <div class="cart-header">
             <h2>Your Cart</h2>
@@ -223,31 +223,21 @@
         </div>
     </div>
 
+
     <!-- Checkout Modal -->
     <div class="modal" id="checkout-modal">
         <div class="modal-content">
             <span class="close-modal" data-modal="checkout-modal">&times;</span>
             <h2>Checkout</h2>
             <form id="checkout-form" onsubmit="handleCheckout(event)">
-                <textarea
-                    id="checkout-address"
-                    placeholder="Delivery Address&#10;Street, Suburb, City, Postal Code"
-                    rows="3"
-                    required
-                    style="resize:vertical;"
-                ></textarea>
-                <input
-                    type="email"
-                    id="checkout-email-confirm"
-                    placeholder="Confirm your email address"
-                    required
-                >
-                <textarea
-                    id="checkout-notes"
-                    placeholder="Order notes (optional) — e.g. leave at door, call on arrival..."
-                    rows="3"
-                    style="resize:vertical;"
-                ></textarea>
+                <input type="text" id="checkout-street" placeholder="Street Address" required>
+                <input type="text" id="checkout-suburb" placeholder="Suburb" required>
+                <input type="text" id="checkout-city" placeholder="City" required>
+                <input type="text" id="checkout-postal" placeholder="Postal Code" required>
+                <input type="email" id="checkout-email-confirm" placeholder="Confirm your email address" required>
+                <textarea id="checkout-notes"
+                    placeholder="Order notes (optional) — e.g. leave at door, call on arrival..." rows="3"
+                    style="resize:vertical;"></textarea>
                 <button type="submit" class="submit-btn">Place Order</button>
             </form>
         </div>

@@ -1,14 +1,25 @@
+require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Email transporter setup
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // or 'outlook', 'yahoo', etc.
+    auth: {
+        user: process.env.EMAIL_USER,     // your email
+        pass: process.env.EMAIL_PASSWORD  // your email password or app password
+    }
+});
 
 // Health check
 app.get('/', (req, res) => {
@@ -155,7 +166,45 @@ app.post('/api/orders', async (req, res) => {
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [user_id, user_name, user_email, delivery_address, email_confirm, order_notes || '', JSON.stringify(cart_items), total]
         );
-        res.status(201).json({ message: 'Order placed successfully', orderId: result.insertId });
+
+        const orderId = result.insertId;
+
+        // Send email notification
+        try {
+            const itemsList = cart_items.map(item => 
+                `- ${item.name} (${item.color} / ${item.size}) — R${item.price.toFixed(2)}`
+            ).join('\n');
+
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
+                subject: `🎉 New Order #${orderId} - Royal Priesthood`,
+                text: `
+New Order Received!
+
+Order #: ${orderId}
+Customer: ${user_name}
+Email: ${user_email}
+Delivery Address: ${delivery_address}
+
+Items:
+${itemsList}
+
+Total: R${parseFloat(total).toFixed(2)}
+
+Order Notes: ${order_notes || 'None'}
+
+Login to admin panel to manage this order.
+                `.trim()
+            });
+
+            console.log(`Email sent for order #${orderId}`);
+        } catch (emailErr) {
+            console.error('Email send error:', emailErr);
+            // Don't fail the order if email fails
+        }
+
+        res.status(201).json({ message: 'Order placed successfully', orderId });
     } catch (err) {
         console.error('Order error:', err);
         res.status(500).json({ message: 'Server error' });

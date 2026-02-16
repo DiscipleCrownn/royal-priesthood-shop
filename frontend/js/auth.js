@@ -1,5 +1,7 @@
 // Authentication Functions
-const API_URL = "https://royal-priesthood-shop.onrender.com/api";
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api' 
+    : 'https://royal-priesthood-shop.onrender.com/api';
 
 // Show Modal
 function showModal(modalId) {
@@ -140,8 +142,13 @@ function openCheckout() {
 async function handleCheckout(e) {
     e.preventDefault();
 
-    const user             = JSON.parse(localStorage.getItem('user'));
-    const delivery_address = document.getElementById('checkout-address').value;
+    const user   = JSON.parse(localStorage.getItem('user'));
+    const street = document.getElementById('checkout-street').value;
+    const suburb = document.getElementById('checkout-suburb').value;
+    const city   = document.getElementById('checkout-city').value;
+    const postal = document.getElementById('checkout-postal').value;
+    
+    const delivery_address = `${street}, ${suburb}, ${city}, ${postal}`;
     const email_confirm    = document.getElementById('checkout-email-confirm').value;
     const order_notes      = document.getElementById('checkout-notes').value;
     const total            = cart.reduce((sum, item) => sum + item.price, 0);
