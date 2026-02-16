@@ -172,13 +172,13 @@ app.post('/api/orders', async (req, res) => {
 
         const orderId = result.insertId;
 
-        // Send confirmation email to customer (non-blocking)
+        // Send emails in background (non-blocking)
         if (transporter) {
             const itemsList = cart_items.map(item => 
                 `${item.name} (${item.color} / ${item.size}) — R${item.price.toFixed(2)}`
             ).join('\n');
 
-            // Send email in background - don't wait for it
+            // 1. Customer confirmation email
             transporter.sendMail({
                 from: `"Royal Priesthood" <${process.env.EMAIL_USER}>`,
                 to: user_email,
@@ -205,10 +205,40 @@ We'll be in touch soon with shipping updates.
 Best regards,
 Royal Priesthood Team
                 `.trim()
-            }).catch(err => console.error('Email error:', err));
+            }).catch(err => console.error('Customer email error:', err));
+
+            // 2. Admin notification email
+            transporter.sendMail({
+                from: `"Royal Priesthood Orders" <${process.env.EMAIL_USER}>`,
+                to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
+                subject: `🎉 New Order #${orderId} - Royal Priesthood`,
+                text: `
+NEW ORDER RECEIVED!
+
+Order #: ${orderId}
+Date: ${new Date().toLocaleString('en-ZA')}
+
+CUSTOMER INFO:
+Name: ${user_name}
+Email: ${user_email}
+Confirm Email: ${email_confirm}
+
+DELIVERY ADDRESS:
+${delivery_address}
+
+ITEMS ORDERED:
+${itemsList}
+
+TOTAL: R${parseFloat(total).toFixed(2)}
+
+${order_notes ? `ORDER NOTES:\n${order_notes}\n` : ''}
+View full details: ${process.env.ADMIN_URL || 'https://royal-priesthood-shop.onrender.com'}/admin
+
+                `.trim()
+            }).catch(err => console.error('Admin email error:', err));
         }
 
-        // Respond immediately without waiting for email
+        // Respond immediately without waiting for emails
         res.status(201).json({ message: 'Order placed successfully', orderId });
     } catch (err) {
         console.error('Order error:', err);
