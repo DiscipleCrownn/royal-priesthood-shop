@@ -12,14 +12,17 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Email transporter setup
-const transporter = nodemailer.createTransport({
-    service: 'gmail', // or 'outlook', 'yahoo', etc.
-    auth: {
-        user: process.env.EMAIL_USER,     // your email
-        pass: process.env.EMAIL_PASSWORD  // your email password or app password
-    }
-});
+// Email transporter setup (only if credentials provided)
+let transporter = null;
+if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
+    transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+}
 
 // Health check
 app.get('/', (req, res) => {
@@ -169,41 +172,43 @@ app.post('/api/orders', async (req, res) => {
 
         const orderId = result.insertId;
 
-        // Send email notification
-        try {
+        // Send confirmation email to customer (non-blocking)
+        if (transporter) {
             const itemsList = cart_items.map(item => 
-                `- ${item.name} (${item.color} / ${item.size}) — R${item.price.toFixed(2)}`
+                `${item.name} (${item.color} / ${item.size}) — R${item.price.toFixed(2)}`
             ).join('\n');
 
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
-                subject: `🎉 New Order #${orderId} - Royal Priesthood`,
+            // Send email in background - don't wait for it
+            transporter.sendMail({
+                from: `"Royal Priesthood" <${process.env.EMAIL_USER}>`,
+                to: user_email,
+                subject: `Order Confirmation #${orderId} - Royal Priesthood`,
                 text: `
-New Order Received!
+Hi ${user_name},
 
-Order #: ${orderId}
-Customer: ${user_name}
-Email: ${user_email}
-Delivery Address: ${delivery_address}
+Thank you for your order! Here are your order details:
 
-Items:
+Order Number: #${orderId}
+Order Date: ${new Date().toLocaleDateString('en-ZA')}
+
+Items Ordered:
 ${itemsList}
 
 Total: R${parseFloat(total).toFixed(2)}
 
-Order Notes: ${order_notes || 'None'}
+Delivery Address:
+${delivery_address}
 
-Login to admin panel to manage this order.
+${order_notes ? `Special Instructions:\n${order_notes}\n` : ''}
+We'll be in touch soon with shipping updates.
+
+Best regards,
+Royal Priesthood Team
                 `.trim()
-            });
-
-            console.log(`Email sent for order #${orderId}`);
-        } catch (emailErr) {
-            console.error('Email send error:', emailErr);
-            // Don't fail the order if email fails
+            }).catch(err => console.error('Email error:', err));
         }
 
+        // Respond immediately without waiting for email
         res.status(201).json({ message: 'Order placed successfully', orderId });
     } catch (err) {
         console.error('Order error:', err);
