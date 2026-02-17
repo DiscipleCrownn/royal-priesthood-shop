@@ -24,10 +24,7 @@ if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
     });
 }
 
-// Health check
-app.get('/', (req, res) => {
-    res.send('Royal Priesthood API is running');
-});
+
 
 // Database connection pool
 const pool = mysql.createPool({
@@ -318,11 +315,14 @@ app.patch('/api/admin/orders/:id/status', requireAdmin, async (req, res) => {
 // ─── FRONTEND ROUTES ─────────────────────────────────────────────────────────
 
 // Admin page
+// ─── FRONTEND ROUTES ─────────────────────────────────────────────────────────
+
+// Admin page
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/admin.html'));
 });
 
-// Serve frontend
+// Serve frontend (must be last!)
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
